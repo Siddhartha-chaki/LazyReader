@@ -23,3 +23,6 @@ class Image(models.Model):
 
     class Meta:
         get_latest_by = ['id']
+
+class PDF(models.Model):
+    pass

@@ -30,11 +30,12 @@ def extractImage(request):
         # rec = Image.objects.get(id=record_id)
         rec=Image.objects.filter(id=record_id)
         rec_vals=rec.values()
+        print(rec_vals)
         img_path=rec_vals[0]['imgs']
         img_name=img_path.split("/")[1]
         img_full_path = "./media/" + img_path
         img_lang=rec_vals[0]['language']
-        if not Image.objects.filter(id__in=record_id, content="").exists():
+        if rec_vals[0]['content'] == "":
             if path.exists(img_full_path):
                 content, res_img, res_audio = processImage(img_name, img_lang)  # [st, res_file_nm, audio_file]
                 rec.update(title=img_name)
@@ -45,8 +46,10 @@ def extractImage(request):
                 print("result values: ", rec.values())
                 contex["result_rec"] = rec
             else:
+                print("erro occurs")
                 contex['file_error'] = "uploaded file may be damaged pls try again with other file....."
         else:
+            print("record already exists")
             contex["result_rec"] = rec
         form = ImageForm()
         contex['form'] = form
@@ -87,3 +90,10 @@ def convertAudio(content,language,filename):
     new_path="./media/"+file
     myobj.save(new_path)
     return file
+
+def PDFPage(request):
+
+    return render(request,"PDFextraction.html",None)
+def audioList(request):
+    all_result=Image.objects.all().values()
+    return render(request,"Audio_list.html",{'aud_list':all_result})
