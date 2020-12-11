@@ -1,4 +1,5 @@
 from django.db import models
+from .validators import validate_file_extension
 #processing languge
 LANGS=[
     ('hi','Hindi'),
@@ -25,4 +26,13 @@ class Image(models.Model):
         get_latest_by = ['id']
 
 class PDF(models.Model):
-    pass
+    pdf_file=models.FileField(upload_to="uploaded_pdfs",validators=[validate_file_extension])
+    language = models.CharField(max_length=15, choices=LANGS, default=LANGS[5])
+    img_folder=models.CharField(max_length=100)
+    img_pinter=models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    content=models.TextField()
+    songfile = models.FileField()
+    def __str__(self):
+        return self.title
+

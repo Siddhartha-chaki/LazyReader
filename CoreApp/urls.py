@@ -6,4 +6,6 @@ urlpatterns = [
     path('extractImage',views.extractImage,name="extrect"),
     path('audiolist',views.audioList,name="audio list"),
     path('PDFex',views.PDFPage,name="pdf extrect"),
+    path('upoladpdf',views.PDFPage,name="pdf extrect"),
+    path('extractPDF',views.extractPDF,name="extrect"),
 ]

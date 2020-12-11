@@ -19,6 +19,23 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+    <style>
+        div.image-loader {
+            margin-top: 20px;
+            width: 100%;
+            height: 500px;
+            overflow: scroll;
+        {#overflow-x:  auto ;#}{#overflow-y: hidden;#}
+
+        }
+
+        div.image-loader img {
+            margin: 10px;
+            float: contour;
+            width: 31%;
+            height: 250px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-info static-top">
@@ -32,9 +49,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item ">
-                    <a class="nav-link">Home
-                        <span class="sr-only">(current)</span>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home
                     </a>
                 </li>
                 <li class="nav-item">
@@ -42,6 +58,7 @@
                 </li>
                 <li class="nav-item  active">
                     <a class="nav-link">PDF extraction</a>
+                    <span class="sr-only">(current)</span>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#"></a>
@@ -51,23 +68,72 @@
     </div>
 </nav>
 <div class="container">
-    <ul class="list-group">
-        {% if aud_list %}
-            {% for x in aud_list %}
-                {% if x.songfile != "" %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ x.title }}
-                        <span class="badge badge-primary badge-pill">
-                            <audio controls>
-                              <source src="/media/{{ x.songfile }}" type="audio/mpeg">
-                            </audio>
-                        </span>
-                    </li>
-                {% endif %}
+    <form action="/upoladpdf" method="POST" enctype="multipart/form-data" class="fm">
+        {% csrf_token %}
+        <div class="row" style="padding-top: 20px">
+            <div class="input-group">
+                <div class="custom-file">
+                    {{ form }}
+                    {#                    <input type="file" id="inputGroupFile" required accept="image/jpg, image/jpeg, image/png"#}
+                    {#                           onchange="readURL(this);">#}
+                </div>
+                <div class="input-group-append ml-5">
+                    <input class="input-group-text" type="submit" value="upload">
+                </div>
+            </div>
+        </div>
+    </form>
 
+    {% if pdf_images %}
+        <div class="image-loader">
+            {% for data in pdf_images %}
+                {% if data.done %}
+                    <img style="border: 2px solid green;" src="{{ data.img }}"/>
+                {% else %}
+                    <img style="border: 2px solid yellow;" src="{{ data.img }}"/>
+                {% endif %}
+            {% endfor %}
+        </div>
+{#    {% elif result_rec %}#}
+{#        <div class="image-loader">#}
+{#            {% for data in pdf_images %}#}
+{#                <img style="border: 2px solid green;" src="{{ data.img }}"/>#}
+{#            {% endfor %}#}
+{#        </div>#}
+    {% endif %}
+
+
+    <div class="row">
+        {% if pdf_data %}
+            {% for x in pdf_data %}
+                <div style="width: 100%">
+                    <form action="extractPDF" method="GET">
+                        <input type="hidden" id="id" name="id" value="{{ x.id }}">
+                        <button type="submit" class="btn btn-secondary btn-lg btn-block" style="margin-top: 20px">
+                            Extract
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <button disabled type="button" class="btn btn-secondary btn-lg btn-block" style="margin-top: 20px">
+                Extreact
+            </button>
+        {% endif %}
+    </div>
+    {##}
+        {% if result_rec %}
+            {% for x in result_rec %}
+                <div class="form-group mt-3">
+                    <label for="comment">Extracted Text from Image</label>
+                    <textarea class="form-control" rows="5" id="comment">{{ x.content }}</textarea>
+                </div>
+                <audio controls style="width: 100%; margin-bottom: 50px;">
+                    <source src="{{ x.songfile.url }}" type="audio/mpeg">
+                </audio>
             {% endfor %}
         {% endif %}
-    </ul>
 </div>
+
 </body>
 </html>
