@@ -2,7 +2,6 @@
 from django.shortcuts import render,HttpResponse
 # Create your views here.
 from pdf2image import convert_from_path
-
 from CoreApp.models import Image, PDF
 from CoreApp.fomrs import ImageForm, PDFForm
 from PIL import Image as PILIMG
@@ -13,7 +12,7 @@ from gtts import gTTS
 import os
 import random
 import string
-import re
+
 
 def index(request):
     contex={}
@@ -60,7 +59,6 @@ def extractImage(request):
         form = ImageForm()
         contex['form'] = form
         return render(request, 'index.html', contex)
-
 
 def processImage(filename,language):
     lang = ['en']
@@ -126,12 +124,11 @@ def PDF_to_img(filename):
     path="./media/uploaded_pdfs/"+alias
     os.mkdir(path)
     i=0
-    for imgs in convert_from_path("./media/"+filename):
+    for imgs in convert_from_path("./media/"+filename,size=640):
         img_name=path+"/"+str(i)+".jpeg"
         imgs.save(img_name)
         i+=1
     return path
-
 
 def processDir(img_folder, img_lang,file_title):
     lang = [img_lang]
@@ -157,9 +154,6 @@ def processDir(img_folder, img_lang,file_title):
     print(content)
     audio_file=convertAudio(content,img_lang,file_title)
     return content,audio_file
-
-
-
 
 def extractPDF(request):
     if request.method == 'POST':
